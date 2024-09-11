@@ -12,10 +12,10 @@ class WeatherController extends ChangeNotifier {
   CurrentWeatherDataModel? currentData;
 
   getHourWeeklyWeather() async {
-    weatherData = await WeatherApis().getHourWeatherRequest();
+    weatherData = await WeatherApis().getHourweekWeatherRequest();
   }
 
-  getCurrentWeatherr() async {
+  getCurrentWeather() async {
     currentData = await WeatherApis().getCurrentWeather();
   }
 }

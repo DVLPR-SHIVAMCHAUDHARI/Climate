@@ -5,7 +5,17 @@ import 'package:clima/controllers/weather_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-getDay(int miliseconds) {}
+getHour(int miliseconds) {
+  DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(miliseconds * 1000);
+  int hour = dateTime.hour;
+  String ampm = "AM";
+
+  if (hour > 12) {
+    hour = hour - 12;
+    ampm = "PM";
+  }
+  return "${hour.toString().padLeft(2, "0")} $ampm";
+}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,92 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomSheet: Container(
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          gradient: AppColors.bgGrident,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(44.r),
-            topRight: Radius.circular(44.r),
-          ),
-        ),
-        height: 325.h,
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            SizedBox(
-              height: 25.h,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 32.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      selectedTab = 0;
-                      setState(() {});
-                    },
-                    child: Text(
-                      "Hourly Forcast",
-                      style: TextStyle(
-                          fontSize: 15.sp,
-                          color: AppColors.labelDarkSecondary,
-                          fontFamily: Typo.semibold),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      selectedTab = 1;
-                      setState(() {});
-                    },
-                    child: Text(
-                      "Weekly Forcast",
-                      style: TextStyle(
-                          fontSize: 15.sp,
-                          color: AppColors.labelDarkSecondary,
-                          fontFamily: Typo.semibold),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 4.h,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Divider(
-                    height: 1,
-                    thickness: selectedTab == 0 ? 1 : 0,
-                    color: selectedTab == 0
-                        ? Colors.white
-                        : Colors.white.withOpacity(0.10),
-                  ),
-                ),
-                Expanded(
-                  child: Divider(
-                    height: 1,
-                    thickness: selectedTab == 1 ? 1 : 0,
-                    color: selectedTab == 1
-                        ? Colors.white
-                        : Colors.white.withOpacity(0.10),
-                  ),
-                )
-              ],
-            ),
-            const Divider(
-              height: 1,
-              thickness: 0.30,
-            ),
-            SizedBox(
-              height: 20.h,
-            ),
-            selectedTab == 0 ? hourlyWeather() : WeeklyWeather()
-          ],
-        ),
-      ),
+      bottomSheet: BottomSheet(),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -122,14 +47,18 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         child: Column(
           children: [
-            SizedBox(height: 98.h),
+            SizedBox(height: 40.h),
+            Image.network(
+              "https://openweathermap.org/img/wn/${WeatherController().currentData!.weather![0].icon}@2x.png",
+              scale: 2,
+            ),
             Text(
               WeatherController().currentData!.name!,
               style: TextStyle(fontSize: 34.sp, color: Colors.white),
             ),
             SizedBox(
               child: Text(
-                "19℃",
+                "${WeatherController().currentData!.main!.temp!.round().toString()}°C",
                 style: TextStyle(
                     fontSize: 85.sp,
                     color: Colors.white,
@@ -138,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: 12.h),
             Text(
-              "Mostly Clear",
+              WeatherController().currentData!.weather![0].description!,
               style: TextStyle(
                 fontSize: 20.sp,
                 color: AppColors.labelDarkSecondary,
@@ -147,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: 23.h),
             Text(
-              "H:24  L:18",
+              "H:${WeatherController().currentData!.main!.tempMax!.round()}  L:${WeatherController().currentData!.main!.tempMin!.round()}",
               style: TextStyle(
                 fontSize: 20.sp,
                 color: Colors.white,
@@ -161,6 +90,95 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           ],
         ),
+      ),
+    );
+  }
+
+  Container BottomSheet() {
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        gradient: AppColors.bgGrident,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(44.r),
+          topRight: Radius.circular(44.r),
+        ),
+      ),
+      height: 325.h,
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          SizedBox(
+            height: 25.h,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    selectedTab = 0;
+                    setState(() {});
+                  },
+                  child: Text(
+                    "Hourly Forcast",
+                    style: TextStyle(
+                        fontSize: 15.sp,
+                        color: AppColors.labelDarkSecondary,
+                        fontFamily: Typo.semibold),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    selectedTab = 1;
+                    setState(() {});
+                  },
+                  child: Text(
+                    "Weekly Forcast",
+                    style: TextStyle(
+                        fontSize: 15.sp,
+                        color: AppColors.labelDarkSecondary,
+                        fontFamily: Typo.semibold),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 4.h,
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Divider(
+                  height: 1,
+                  thickness: selectedTab == 0 ? 1 : 0,
+                  color: selectedTab == 0
+                      ? Colors.white
+                      : Colors.white.withOpacity(0.10),
+                ),
+              ),
+              Expanded(
+                child: Divider(
+                  height: 1,
+                  thickness: selectedTab == 1 ? 1 : 0,
+                  color: selectedTab == 1
+                      ? Colors.white
+                      : Colors.white.withOpacity(0.10),
+                ),
+              )
+            ],
+          ),
+          const Divider(
+            height: 1,
+            thickness: 0.30,
+          ),
+          SizedBox(
+            height: 20.h,
+          ),
+          selectedTab == 0 ? hourlyWeather() : WeeklyWeather()
+        ],
       ),
     );
   }
@@ -218,7 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
       height: 146.h,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: 10,
+        itemCount: WeatherController().weatherData!.hourly!.length,
         itemBuilder: (context, index) => Container(
           margin: EdgeInsets.only(left: index == 0 ? 20.w : 12.w),
           decoration: BoxDecoration(
@@ -233,7 +251,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 16.h,
               ),
               Text(
-                "12 AM",
+                getHour(WeatherController()
+                    .weatherData!
+                    .hourly![index]
+                    .dt!
+                    .toInt()),
                 style: TextStyle(
                   color: Colors.white,
                   fontFamily: Typo.semibold,

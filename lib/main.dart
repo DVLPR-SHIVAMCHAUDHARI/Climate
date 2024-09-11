@@ -13,7 +13,6 @@ final logger = Logger();
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  LocationService().init();
   runApp(Clima());
 }
 

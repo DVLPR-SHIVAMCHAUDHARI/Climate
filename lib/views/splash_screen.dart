@@ -21,9 +21,11 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   changeScreen() {
-    Future.delayed(Duration(seconds: 2), () async {
+    Future.delayed(Duration.zero, () async {
+      await LocationService().init();
+
       await WeatherController().getHourWeeklyWeather();
-      await WeatherController().getCurrentWeatherr();
+      await WeatherController().getCurrentWeather();
 
       GoRouter.of(context).goNamed(HomeScreen.id);
     });

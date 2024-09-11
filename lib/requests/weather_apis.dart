@@ -14,7 +14,7 @@ class WeatherApis {
 
   String apikey = "1ef45e729cd06b8a0a29b16df2dc4e79";
 
-  Future<WhetherDataModel?> getHourWeatherRequest() async {
+  Future<WhetherDataModel?> getHourweekWeatherRequest() async {
     Position? position = LocationService().position;
 
     if (position == null) return null;
@@ -32,14 +32,15 @@ class WeatherApis {
     } catch (e) {
       logger.e(e.toString());
     }
+    return null;
   }
 
-  getCurrentWeather() async {
+  Future<CurrentWeatherDataModel?> getCurrentWeather() async {
     Position? position = LocationService().position;
 
     if (position == null) return null;
     Uri url = Uri.parse(
-        "https://api.openweathermap.org/data/2.5/weather?lat=${position.latitude}&lon=${position.longitude}&appid=$apikey");
+        "https://api.openweathermap.org/data/2.5/weather?lat=${position.latitude}&lon=${position.longitude}&appid=$apikey&units=metric");
 
     try {
       http.Response response = await http.get(url);
